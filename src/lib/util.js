@@ -4,7 +4,9 @@ const path = require('path');
 const getEnvironmentVariables = function (variableNames) {
     let values = {};
     try {
-        const environmentVariables = JSON.parse(fs.readFileSync('env.json'));
+        const environmentVariables = JSON.parse(
+            fs.readFileSync(path.resolve('env.json'))
+        );
         for (let i = 0; i < variableNames.length; i++) {
             const variableName = variableNames[i];
             values[variableName] = environmentVariables[variableName];

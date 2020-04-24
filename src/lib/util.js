@@ -1,7 +1,7 @@
 const getEnvironmentVariables = function (variableNames) {
     let values = {};
     try {
-        const canResolve = require.resolve('../../_env');
+        const canResolve = require.resolve('../../env');
         if (canResolve) {
             environmentVariables = require('../../env');
         }

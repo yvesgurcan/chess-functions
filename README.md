@@ -2,9 +2,18 @@
 
 Lambda functions to handle chess games data.
 
-CORS policy: Only requests from origin `https://chess.yvesgurcan.com` are allowed. If the lambdas are running from `localhost`, requests from all origins are allowed.
-
 ## Development
+
+Create a `.env` file using this template:
+
+```
+GITHUB_TOKEN=XXX
+GITHUB_REPOSITORY_NAME=chess-storage
+GITHUB_REPOSITORY_OWNER=yvesgurcan
+ALLOWED_ORIGIN=*
+```
+
+CORS policy: To restrict access to the functions in production, make sure to update the allowed origin.
 
 Install project dependencies:
 
@@ -16,29 +25,9 @@ Run functions locally:
 
 ## Game data
 
-### New game
-
-When a game is saved for the first time in the data store, the player who sent the game data first is considered the host and other players are automatically given the role of guest. This data is added by the function in the `players` object:
-
-```json
-    "players": [
-        {
-            "playerId": "ff5b8d2d-0452-4bb5-a805-649624ae4dc1",
-            "host": true,
-            "color": 0,
-            "control": "Human"
-        },
-        {
-            "playerId": "98b029e0-00aa-4ab0-8efd-6560f784ce5c",
-            "color": 1,
-            "control": "Human"
-        }
-    ]
-```
-
 ### Load game
 
-When clients connect to a game, they load the whole game from the data store. Afterwards, data provided by the websocket server is used to patch the game state locally.
+When clients connect to a game, they load the whole game from the data store. Afterwards, data provided by the websocket server is used to patch the game state locally as they play.
 
 ### Save game
 

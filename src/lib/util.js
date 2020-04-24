@@ -1,7 +1,10 @@
 const getEnvironmentVariables = function (variableNames) {
     let values = {};
     try {
-        const environmentVariables = require('../../env');
+        const canResolve = require.resolve('../../_env');
+        if (canResolve) {
+            environmentVariables = require('../../env');
+        }
         for (let i = 0; i < variableNames.length; i++) {
             const variableName = variableNames[i];
             values[variableName] = environmentVariables[variableName];

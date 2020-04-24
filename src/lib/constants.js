@@ -1,4 +1,4 @@
-const { getEnvironmentVariables } = require('../lib/util');
+const { getEnvironmentVariables } = require('./util');
 const { ALLOWED_ORIGIN } = getEnvironmentVariables(['ALLOWED_ORIGIN']);
 
 module.exports = {

@@ -6,7 +6,7 @@
     "main": "",
     "scripts": {
         "start": "LOCAL=true SILENCE_EMPTY_LAMBDA_WARNING=true netlify-lambda serve src/lambda",
-        "build": "echo {} > env.json; netlify-lambda build src/lambda"
+        "build": "netlify-lambda build src/lambda"
     },
     "author": "Yves Gurcan",
     "license": "MIT",

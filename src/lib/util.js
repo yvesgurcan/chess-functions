@@ -1,9 +1,9 @@
 const getEnvironmentVariables = function (variableNames) {
     let values = {};
     try {
-        const canResolve = require.resolve('../../env');
-        if (canResolve) {
-            environmentVariables = require('../../env');
+        const pathToEnvFile = require.resolve('../../env');
+        if (pathToEnvFile) {
+            environmentVariables = fs.readFileSync(pathToEnvFile);
         }
         for (let i = 0; i < variableNames.length; i++) {
             const variableName = variableNames[i];

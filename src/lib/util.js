@@ -1,15 +1,16 @@
+const fs = require('fs');
+const path = require('path');
+
 const getEnvironmentVariables = function (variableNames) {
     let values = {};
     try {
-        const pathToEnvFile = require.resolve('../../env');
-        if (pathToEnvFile) {
-            environmentVariables = fs.readFileSync(pathToEnvFile);
-        }
+        const environmentVariables = JSON.parse(fs.readFileSync('env.json'));
         for (let i = 0; i < variableNames.length; i++) {
             const variableName = variableNames[i];
             values[variableName] = environmentVariables[variableName];
         }
     } catch (error) {
+        console.log(error);
         for (let i = 0; i < variableNames.length; i++) {
             const variableName = variableNames[i];
             values[variableName] = process.env[variableName];

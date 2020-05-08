@@ -1,7 +1,6 @@
-const axios = require('axios');
 const packageInfo = require('../../package.json');
 
-export async function handler(event) {
+export async function handler() {
     const { name, version, description } = packageInfo;
     return {
         statusCode: 200,

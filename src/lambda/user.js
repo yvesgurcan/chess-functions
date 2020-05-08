@@ -27,19 +27,19 @@ function preflight() {
     };
 }
 
-async function loadGame(event) {
+async function loadUser(event) {
     try {
         const parameters = event.queryStringParameters;
 
-        if (!parameters.fileId) {
+        if (!parameters.userId) {
             return {
                 statusCode: 400,
-                body: 'fileId is required',
+                body: 'userId is required',
                 headers: DEFAULT_HEADERS
             };
         }
 
-        const expression = `master:games/${parameters.fileId}.json`;
+        const expression = `master:users/${parameters.userId}.json`;
         const url = GITHUB_GRAPHQL_API;
 
         if (
@@ -97,85 +97,69 @@ async function loadGame(event) {
     }
 }
 
-async function saveGame(event) {
-    try {
-        const parameters = event.queryStringParameters;
+async function saveUser(event) {
+    const parameters = event.queryStringParameters;
 
-        if (!parameters.fileId) {
-            return {
-                statusCode: 400,
-                body: 'fileId is required',
-                headers: DEFAULT_HEADERS
-            };
-        }
-
-        if (!parameters.content) {
-            return {
-                statusCode: 400,
-                body: 'content is required',
-                headers: DEFAULT_HEADERS
-            };
-        }
-
-        const encodedContent = Base64.encode(parameters.content);
-
-        let oid = null;
-
-        if (parameters.oid) {
-            oid = parameters.oid;
-        } else {
-            const checkIfFileExists = await loadGame({
-                queryStringParameters: {
-                    fileId: parameters.fileId
-                }
-            });
-
-            if (checkIfFileExists.statusCode === 200) {
-                const bodyCheckIfFileExists = JSON.parse(
-                    checkIfFileExists.body
-                );
-                oid = bodyCheckIfFileExists.oid;
-            }
-        }
-
-        if (
-            !GITHUB_TOKEN ||
-            !GITHUB_REPOSITORY_NAME ||
-            !GITHUB_REPOSITORY_OWNER
-        ) {
-            return {
-                statusCode: 500,
-                headers: DEFAULT_HEADERS
-            };
-        }
-
-        const url = `${GITHUB_REST_API}/repos/${GITHUB_REPOSITORY_OWNER}/${GITHUB_REPOSITORY_NAME}/contents/games/${parameters.fileId}.json`;
-
-        const response = await axios({
-            url,
-            method: 'put',
-            headers: { Authorization: `bearer ${GITHUB_TOKEN}` },
-            data: {
-                message: `Update games/${parameters.fileId}.json`,
-                content: encodedContent,
-                ...(oid && { sha: oid })
-            }
-        });
-
+    if (!parameters.userId) {
         return {
-            statusCode: 200,
-            body: JSON.stringify({
-                oid: response.data.content.sha
-            }),
-            headers: DEFAULT_HEADERS
-        };
-    } catch (error) {
-        return {
-            statusCode: 500,
-            body: error.message,
+            statusCode: 400,
+            body: 'userId is required',
             headers: DEFAULT_HEADERS
         };
     }
+
+    if (!parameters.content) {
+        return {
+            statusCode: 400,
+            body: 'content is required',
+            headers: DEFAULT_HEADERS
+        };
+    }
+
+    const encodedContent = Base64.encode(parameters.content);
+
+    let oid = null;
+
+    if (parameters.oid) {
+        oid = parameters.oid;
+    } else {
+        const checkIfUserExists = await loadUser({
+            queryStringParameters: { userId: parameters.userId }
+        });
+
+        if (checkIfUserExists.statusCode === 200) {
+            const bodyCheckIfUserExists = JSON.parse(checkIfUserExists.body);
+            oid = bodyCheckIfUserExists.oid;
+        }
+    }
+
+    if (!GITHUB_TOKEN || !GITHUB_REPOSITORY_NAME || !GITHUB_REPOSITORY_OWNER) {
+        return {
+            statusCode: 500,
+            headers: DEFAULT_HEADERS
+        };
+    }
+
+    const url = `${GITHUB_REST_API}/repos/${GITHUB_REPOSITORY_OWNER}/${GITHUB_REPOSITORY_NAME}/contents/users/${parameters.userId}.json`;
+
+    const response = await axios({
+        url,
+        method: 'put',
+        headers: { Authorization: `bearer ${GITHUB_TOKEN}` },
+        data: {
+            message: `Update users/${parameters.userId}.json`,
+            content: encodedContent,
+            ...(oid && { sha: oid })
+        }
+    });
+
+    return {
+        statusCode: 200,
+        body: JSON.stringify({
+            oid: response.data.content.sha
+        }),
+        headers: DEFAULT_HEADERS
+    };
 }
 
 export async function handler(event) {
@@ -190,10 +174,10 @@ export async function handler(event) {
             return preflight();
         }
         case 'GET': {
-            return loadGame(event);
+            return loadUser(event);
         }
         case 'POST': {
-            return saveGame(event);
+            return saveUser(event);
         }
     }
 }
